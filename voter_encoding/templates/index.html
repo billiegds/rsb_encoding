@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Party Leaders List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet" />
+    <!-- Font Awesome Link -->
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+      <style>
+        body {
+          font-family: "Roboto", sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f6f9;
+          color: #333;
+        }
+  
+        /* Navigation Bar Styles */
+        nav {
+          background-color: #d32f2f;
+          display: flex;
+          justify-content: space-between;
+          align-items: center; /* Center items vertically */
+          padding: 15px 30px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+  
+        nav a {
+          color: white;
+          font-size: 1.3em;
+          text-decoration: none;
+        }
+  
+        /* Button Styling */
+        nav .btn-add-leader {
+          background-color: #d32f2f;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          font-size: 1.1em;
+          cursor: pointer;
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+          display: flex;
+          justify-content: center;  /* Center the content horizontally */
+          align-items: center;      /* Center the content vertically */
+        }
+  
+        nav .btn-add-leader:hover {
+          background-color: #d32f2f; /* Change to a slightly darker shade on hover */
+        }
+  
+        /* Make buttons align to the right */
+        .nav-buttons {
+          display: flex;
+          gap: 10px; /* Add space between buttons */
+          margin-left: auto; /* Push the buttons container to the right */
+        }
+        
+        nav .btn-add-leader .icon {
+              font-size: 1.8em; /* Size of the plus sign */
+              margin-right: 8px; /* Space between the icon and the text */
+              display: inline-block; /* Make sure the icon behaves as a normal inline element */
+          }
+  
+        /* If you also want any non-button elements (e.g., logo) to stay on the left, consider styling them individually */
+  
+        /* Custom Search Bar Styling */
+        .search-bar-container {
+          margin: 20px auto;
+          display: flex;
+          justify-content: center;
+          padding: 10px;
+        }
+  
+        .search-bar-container input {
+          padding: 10px 15px;
+          border-radius: 5px;
+          border: 1px solid #ddd;
+          font-size: 1.1em;
+          width: 300px;
+        }
+  
+        .search-bar-container input:focus {
+          border-color: #d32f2f;
+          outline: none;
+        }
+  
+        /* Table Styling */
+        .table-container {
+          margin: 20px auto;
+          max-width: 1800px;
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          padding: 15px;
+        }
+  
+        #party-leader-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 1em;
+          text-align: left;
+          margin: 0 auto;
+        }
+  
+        th,
+        td {
+          padding: 12px 20px;
+          border: 1px solid #ddd;
+        }
+  
+        th {
+          background-color: #f4f6f9;
+          color: #333;
+          font-weight: bold;
+        }
+  
+        td {
+          background-color: #fff;
+        }
+  
+        tr:hover {
+          background-color: #f9e6e6;
+        }
+  
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+          nav {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+  
+          .search-bar-container input {
+            width: 90%;
+          }
+  
+          .table-container {
+            padding: 10px;
+          }
+  
+          table {
+            font-size: 0.9em;
+          }
+        }
+  
+        /* Modal Styling */
+        .modal {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 90%;
+          max-width: 500px;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+          justify-content: center;
+          align-items: center;
+        }
+  
+        .modal-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          width: 100%;
+        }
+  
+        .modal-header {
+          font-size: 1.5em;
+          margin-bottom: 15px;
+        }
+  
+        .close {
+          float: right;
+          font-size: 1.5em;
+          cursor: pointer;
+          color: #d32f2f;
+        }
+  
+        label {
+          font-size: 1em;
+          margin-bottom: 10px;
+          display: block;
+          color: #333;
+        }
+  
+        input[type="text"],
+        input[type="submit"] {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          font-size: 1em;
+          box-sizing: border-box;
+        }
+  
+        input[type="submit"] {
+          background-color: #d32f2f;
+          color: white;
+          border: none;
+          cursor: pointer;
+        }
+  
+        input[type="submit"]:hover {
+          background-color: #b71c1c;
+        }
+  
+        #autocomplete-results {
+          border: 1px solid #ccc;
+          background-color: #fff;
+          position: absolute;
+          width: auto;
+          max-height: 250px;
+          overflow-y: auto;
+          z-index: 999;
+          display: none;
+        }
+  
+        #autocomplete-results div {
+          padding: 12px;
+          cursor: pointer;
+          font-size: 1em;
+        }
+  
+        #autocomplete-results div:hover {
+          background-color: #f1f1f1;
+        }
+        .legend {
+              text-align: center;
+              margin-top: 20px;
+              font-size: 14px;
+              font-weight: bold;
+              
+          }
+          .legend span {
+              margin-right: 15px;
+          }
+      </style>
+    <script>
+      // Initialize DataTable with server-side processing
+      $(document).ready(function () {
+        $("#party-leader-table").DataTable({
+          paging: true,
+          searching: true,
+          info: false,
+          serverSide: true,
+          pageLength: 25,
+          ajax: {
+            url: "{% url 'party_leader_list_ajax' %}",
+            type: "GET",
+          },
+          columns: [
+            { data: "name" }, // Mapping the data to the 'name' column in the table
+            { data: "precinct_number" }, // Mapping the data to the 'precinct' column
+            { data: "legend" }, // Mapping the data to the 'legend' column
+            { data: "address" }, // Mapping the data to the 'address' column
+            { data: "barangay" }, // Mapping the data to the 'barangay' column
+          ],
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <nav>
+      <a href="#">Voters List</a>
+      <div style="display: flex; justify-content: flex-end">
+        <!-- Button for Add Supporter with Plus Icon (Single Button) -->
+        <button
+          class="btn-add-leader"
+          onclick="location.href='/voter_encoding/login/voter_encoding/view_list/'">
+          <span><i class="fas fa-eye" style="margin-right: 8px"></i></span>
+          Voters List
+        </button>
+        <!-- Button for Party Leader -->
+        <button
+          class="btn-add-leader"
+          onclick="location.href='/voter_encoding/add-party-leader/'">
+          <span class="icon">+</span>Party Leader
+        </button>
+        <!-- Button for Supporter -->
+        <button
+          class="btn-add-leader"
+          onclick="location.href='/voter_encoding/add-supporter/'">
+          <span class="icon">+</span>Supporter
+        </button>
+      </div>
+    </nav>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      <table id="party-leader-table" class="display">
+        <thead>
+          <tr>
+            <th>Party Leader Name</th>
+            <th>Precinct</th>
+            <th>Legend</th>
+            <th>Address</th>
+            <th>Barangay</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be dynamically populated via DataTables AJAX -->
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <p>
+        Legend: <span>* - Age 18-30</span><span> A - Illiterate</span
+        ><span> B - PWD (Persons with Disabilities)</span
+        ><span> C - Senior Citizen</span><span> D - Indigenous People</span>
+      </p>
+    </div>
+  </body>
+</html>

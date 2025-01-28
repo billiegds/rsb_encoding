@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Supporter</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet" />
+    <!-- Font Awesome Link -->
+
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f6f9;
+        color: #333;
+      }
+
+      /* Navigation Bar Styles */
+      nav {
+        background-color: #d32f2f;
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Center items vertically */
+        padding: 15px 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      nav a {
+        color: white;
+        font-size: 1.3em;
+        text-decoration: none;
+      }
+
+      /* Button Styling */
+      nav .btn-add-leader {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.1em;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: center; /* Center the content horizontally */
+        align-items: center; /* Center the content vertically */
+      }
+
+      nav .btn-add-leader:hover {
+        background-color: #d32f2f; /* Change to a slightly darker shade on hover */
+      }
+
+      /* Make buttons align to the right */
+      .nav-buttons {
+        display: flex;
+        gap: 10px; /* Add space between buttons */
+        margin-left: auto; /* Push the buttons container to the right */
+      }
+
+      nav .btn-add-leader .icon {
+        font-size: 1.8em; /* Size of the plus sign */
+        margin-right: 8px; /* Space between the icon and the text */
+        display: inline-block; /* Make sure the icon behaves as a normal inline element */
+      }
+
+      /* If you also want any non-button elements (e.g., logo) to stay on the left, consider styling them individually */
+
+      /* Custom Search Bar Styling */
+      .search-bar-container {
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      .search-bar-container input {
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 1.1em;
+        width: 300px;
+      }
+
+      .search-bar-container input:focus {
+        border-color: #d32f2f;
+        outline: none;
+      }
+
+      /* Table Styling */
+      .table-container {
+        margin: 20px auto;
+        max-width: 1800px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+      }
+
+      #party-supporter-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1em;
+        text-align: left;
+        margin: 0 auto;
+      }
+
+      th,
+      td {
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f4f6f9;
+        color: #333;
+        font-weight: bold;
+      }
+
+      td {
+        background-color: #fff;
+      }
+
+      tr:hover {
+        background-color: #f9e6e6;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .search-bar-container input {
+          width: 90%;
+        }
+
+        .table-container {
+          padding: 10px;
+        }
+
+        table {
+          font-size: 0.9em;
+        }
+      }
+
+      /* Modal Styling */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 500px;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        
+      }
+
+      .modal-header {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+      }
+
+      .close {
+        float: right;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: #d32f2f;
+      }
+
+      label {
+        font-size: 1em;
+        margin-bottom: 10px;
+        display: block;
+        color: #333;
+      }
+
+      input[type="text"],
+      input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        box-sizing: border-box;
+      }
+
+      input[type="submit"] {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #b71c1c;
+      }
+
+      #autocomplete-results {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        position: absolute;
+        width: auto;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 999;
+        display: none;
+        min-height: 20px; /* Added to prevent it from collapsing */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      #autocomplete-results div {
+        padding: 12px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      #autocomplete-results div:hover {
+        background-color: #f1f1f1;
+      }
+
+      #autocomplete-results-supporter {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        position: absolute;
+        width: auto;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 999;
+        display: none;
+        min-height: 20px; /* Added to prevent it from collapsing */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      #autocomplete-results-supporter div {
+        padding: 12px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      #autocomplete-results-supporter div:hover {
+        background-color: #f1f1f1;
+      }
+      .legend {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+      .legend span {
+        margin-right: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="#">Supporters</a>
+      <div style="display: flex; justify-content: flex-end">
+        <!-- Button for Add Supporter with Plus Icon (Single Button) -->
+        <button
+          class="btn-add-leader"
+          onclick="location.href='/voter_encoding/login/voter_encoding/view_list/'">
+          <span><i class="fas fa-eye" style="margin-right: 8px"></i></span>
+          Voters List
+        </button>
+
+        <!-- nav-buttons container for other buttons -->
+        <div
+          class="nav-buttons"
+          style="display: flex; justify-content: flex-end">
+          <!-- Button for Party Leader with Plus Icon -->
+          <button
+            class="btn-add-leader"
+            onclick="location.href='/voter_encoding/add-party-leader/'">
+            <span class="icon">+</span>Party Leader
+          </button>
+
+          <!-- Button for Add Supporter with Plus Icon -->
+          <button class="btn-add-leader" id="btn-open-form">
+            <span class="icon">+</span>Supporter
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="table-container">
+      <table id="party-supporter-table" class="display">
+        <thead>
+          <tr>
+            <th>Party Leader Name</th>
+            <th>Supporter Name</th>
+            <th>Cluster</th>
+            <th>Precinct</th>
+            <th>Legend</th>
+            <th>Address</th>
+            <th>Barangay</th>
+            <th>Contact Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for supporter in supporters %}
+          <tr>
+            <td>{{ supporter.party_leader }}</td>
+            <td>{{ supporter.supporter_name }}</td>
+            <td>{{ supporter.supporter_cluster }}</td>
+            <td>{{ supporter.supporter_precinct_number }}</td>
+            <td>{{ supporter.supporter_legend }}</td>
+            <td>{{ supporter.supporter_address }}</td>
+            <td>{{ supporter.supporter_barangay }}</td>
+            <td>{{ supporter.supporter_contact_number }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <p>
+        Legend: <span>* - Age 18-30</span><span> A - Illiterate</span
+        ><span> B - PWD (Persons with Disabilities)</span
+        ><span> C - Senior Citizen</span><span> D - Indigenous People</span>
+      </p>
+    </div>
+
+    <div class="modal" id="party-supporter-modal">
+      <div class="modal-content">
+        <span class="close" id="modal-close">&times;</span>
+        <div
+          class="error-message"
+          id="form-error-message"
+          style="display: none"></div>
+
+        <h2 class="modal-header">Add Party Supporter</h2>
+        <form method="POST" id="party-supporter-form">
+          {% csrf_token %}
+          <label for="party-leader">Party Leader:</label>
+          <input
+            type="text"
+            id="party-leader"
+            name="party_leader"
+            autocomplete="off"
+            required />
+          <div id="autocomplete-results"></div>
+
+          <label for="precinct" style="display: none;">Party Leader Precinct:</label>
+          <input type="text" id="precinct" name="precinct" readonly style="display: none;"/>
+
+          <label for="cluster" style="display: none;">Party Leader Cluster:</label>
+          <input type="text" id="cluster" name="cluster" readonly style="display: none;"/>
+
+          
+          <label for="legend" style="display: none;">Party Leader Legend:</label>
+          <input type="text" id="legend" name="legend" readonly style="display: none;"/>
+
+          <label for="address" style="display: none;">Party Leader Address:</label>
+          <input type="text" id="address" name="address" readonly style="display: none;" />
+
+          <label for="barangay" style="display: none;">Party Leader Barangay:</label>
+          <input type="text" id="barangay" name="barangay" readonly style="display: none;"/>
+
+          <label for="contact-number" style="display: none;" >Party Leader Contact Number:</label>
+          <input
+            type="text"
+            id="contact-number"
+            name="contact-number"
+            readonly style="display: none;"/>
+
+          <label for="party-supporters">Party Supporter:</label>
+          <input
+            type="text"
+            id="party-supporters"
+            name="party-supporters"
+            autocomplete="off"
+            required />
+          <div id="autocomplete-results-supporter"></div>
+
+          <label for="precinct_supporter">Party Supporter Precinct:</label>
+          <input
+            type="text"
+            id="precinct_supporter"
+            name="precinct_supporter"
+            readonly />
+          <label for="cluster_supporter">Party Supporter Cluster:</label>
+          <input type="text" id="cluster_supporter" name="cluster_supporter" readonly />
+  
+
+          <label for="legend_supporter">Party Supporter Legend:</label>
+          <input
+            type="text"
+            id="legend_supporter"
+            name="legend_supporter"
+            readonly />
+
+          <label for="address_supporter">Party Supporter Address:</label>
+          <input
+            type="text"
+            id="address_supporter"
+            name="address_supporter"
+            readonly />
+
+          <label for="barangay_supporter">Party Supporter Barangay:</label>
+          <input
+            type="text"
+            id="barangay_supporter"
+            name="barangay_supporter"
+            readonly />
+
+          <label for="contact_number_supporter">Party Supporter Contact Number:</label>
+          <input
+            type="text"
+            id="contact_number_supporter"
+            name="contact_number_supporter"
+            required
+            pattern="^(\+63|0)[9]\d{9}$"
+            placeholder="e.g., 09123456789" />
+
+          <br /><br />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        const table = $("#party-supporter-table").DataTable({
+          paging: true,
+          searching: true, // Disable the default search functionality
+          ordering: true,
+          lengthChange: false,
+          pageLength: 25,
+          responsive: true,
+        });
+
+        $("#btn-open-form").click(function () {
+          $("#party-supporter-modal").fadeIn();
+        });
+
+        $("#modal-close").click(function () {
+          $("#party-supporter-modal").fadeOut();
+        });
+
+        // Form submission for adding Party Leader and preventing direct JSON display
+        $("#party-leader-form").on("submit", function (event) {
+          event.preventDefault(); // Prevents the default form submit behavior
+
+          const leaderName = $("#party-leader").val();
+          const contactNumber = $("#contact-number").val();
+
+          // Basic form validation
+          if (leaderName === "" || contactNumber === "") {
+            $("#form-error-message").text("All fields are required!").show();
+            return;
+          }
+
+          $.ajax({
+            type: "POST",
+            url: "/voter_encoding/add-party-supporter/",
+            data: $(this).serialize(),
+            success: function (response) {
+              if (response.status === "success") {
+                // Hide the JSON data from being printed
+                $("#form-error-message").hide();
+                alert("Party Supporter added successfully!");
+                location.reload();
+
+                // Dynamically update the table with new data, and prevent a direct display
+                $("#party-supporter-table tbody").append(`<tr>
+                        <td>${response.party_leader_name}</td>
+                        <td>${response.supporter_name}</td>
+                        <td>${response.party_leader_cluster}</td>
+                        <td>${response.precinct_number}</td>
+                        <td>${response.legend}</td>
+                        <td>${response.address}</td>
+                        <td>${response.barangay}</td>
+                        <td>${response.contact_number}</td>
+                      </tr>`);
+                $("#party-supporter-form")[0].reset(); // Reset the form fields
+                $("#party-supporter-modal").fadeOut();
+              } else {
+                // Only show a user-friendly message, suppress JSON
+                $("#form-error-message").text(response.message).show();
+              }
+            },
+            error: function () {
+              // A user-friendly error message without showing the response JSON
+              $("#form-error-message")
+                .text("An error occurred! Please try again.")
+                .show();
+            },
+          });
+        });
+
+        // Autocomplete functionality for Party Leader search field
+        $("#party-leader").on("input", function () {
+          const query = $(this).val();
+
+          if (query.length >= 3) {
+            // Trigger autocomplete when input length is 3 or more
+            $.ajax({
+              url: "/voter_encoding/party-leader-autocomplete/",
+              data: { q: query },
+              success: function (data) {
+                $("#autocomplete-results").empty().show();
+                if (data.length > 0) {
+                  data.forEach(function (item) {
+                    const option = $("<div>")
+                      .text(item.party_leader_name)
+                      .data("id", item.id)
+                      .on("click", function () {
+                        $("#party-leader").val(item.party_leader_name);
+                        $("#precinct").val(item.precinct_number);
+                        $("#cluster").val(item.party_leader_cluster);
+                        $("#legend").val(item.legend);
+                        $("#address").val(item.address);
+                        $("#barangay").val(item.barangay);
+                        $("#contact-number").val(item.contact_number);
+                        $("#autocomplete-results").hide();
+                      });
+                    $("#autocomplete-results").append(option);
+                  });
+                } else {
+                  $("#autocomplete-results").hide();
+                }
+              },
+              error: function () {
+                $("#autocomplete-results").hide();
+              },
+            });
+          } else {
+            $("#autocomplete-results").hide();
+          }
+        });
+
+        // Hide autocomplete results on blur event
+        $("#party-leader").on("blur", function () {
+          setTimeout(function () {
+            $("#autocomplete-results").hide();
+          }, 200);
+        });
+
+        // Autocomplete functionality for Party Supporter search field
+        $("#party-supporters").on("input", function () {
+          const query = $(this).val();
+
+          if (query.length >= 3) {
+            // Trigger autocomplete when input length is 3 or more
+            $.ajax({
+              url: "/voter_encoding/voters-autocomplete/",
+              data: { q: query },
+              success: function (data) {
+                $("#autocomplete-results-supporter").empty().show();
+                if (data.length > 0) {
+                  data.forEach(function (item) {
+                    const option = $("<div>")
+                      .text(item.name)
+                      .data("id", item.id)
+                      .on("click", function () {
+                        $("#party-supporters").val(item.name);
+                        $("#precinct_supporter").val(item.precinct_number);
+                        $("#legend_supporter").val(item.legend);
+                        $("#address_supporter").val(item.address);
+                        fetchCluster();
+                        $("#barangay_supporter").val(item.barangay);
+                        $("#contact-number_supporter").val("");
+                        $("#autocomplete-results-supporter").hide();
+                      });
+                    $("#autocomplete-results-supporter").append(option);
+                  });
+                } else {
+                  $("#autocomplete-results-supporter").hide();
+                }
+              },
+              error: function () {
+                $("#autocomplete-results-supporter").hide();
+              },
+            });
+          } else {
+            $("#autocomplete-results-supporter").hide();
+          }
+        });
+
+        // Hide autocomplete results on blur event
+        $("#party-supporters").on("blur", function () {
+          setTimeout(function () {
+            $("#autocomplete-results").hide();
+          }, 200);
+        });
+      });
+    </script>
+    <script>
+      // Function to fetch cluster based on precinct number
+      function fetchCluster() {
+        var precinctNumber = document.getElementById("precinct_supporter").value;
+        console.log("Precinct Number: ", precinctNumber); // Debug log to check precinct number
+
+        // Check if the precinct number is not empty
+        if (precinctNumber) {
+          // Send a fetch request to the server
+          fetch(
+            `/voter_encoding/find_cluster_by_precinct/?precinct_number=${precinctNumber}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Cluster Data: ", data); // Debug log to check fetched data
+              if (data.cluster_id) {
+                document.getElementById("cluster_supporter").value = data.cluster_id; // Set cluster_id if found
+              } else {
+                document.getElementById("cluster_supporter").value = ""; // Clear the cluster ID if no match
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching cluster:", error); // Error log in case of failure
+            });
+        } else {
+          // If no precinct number, clear the cluster input
+          document.getElementById("cluster_supporter").value = "";
+        }
+      }
+
+      // Add event listener for when the precinct input changes (e.g., on user typing)
+      document
+        .getElementById("contact-number")
+        .addEventListener("input", function () {
+          // Check if the value is not null and has changed
+          if (this.value && this.value !== "") {
+            fetchCluster();
+          }
+        });
+      // Ensure the script is executed only after the DOM has fully loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initial fetch call if needed (e.g., on form pre-population)
+        fetchCluster();
+      });
+    </script>
+  </body>
+</html>
