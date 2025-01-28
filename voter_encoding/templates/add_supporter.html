@@ -172,7 +172,6 @@
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         width: 100%;
-        
       }
 
       .modal-header {
@@ -270,6 +269,21 @@
       .legend span {
         margin-right: 15px;
       }
+
+      #personnel-type {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    
+  }
+
+  #personnel-type option {
+    font-size: 14px;
+  }
+
+     
     </style>
   </head>
   <body>
@@ -361,28 +375,63 @@
             required />
           <div id="autocomplete-results"></div>
 
-          <label for="precinct" style="display: none;">Party Leader Precinct:</label>
-          <input type="text" id="precinct" name="precinct" readonly style="display: none;"/>
+          <label for="precinct" style="display: none"
+            >Party Leader Precinct:</label
+          >
+          <input
+            type="text"
+            id="precinct"
+            name="precinct"
+            readonly
+            style="display: none" />
 
-          <label for="cluster" style="display: none;">Party Leader Cluster:</label>
-          <input type="text" id="cluster" name="cluster" readonly style="display: none;"/>
+          <label for="cluster" style="display: none"
+            >Party Leader Cluster:</label
+          >
+          <input
+            type="text"
+            id="cluster"
+            name="cluster"
+            readonly
+            style="display: none" />
 
-          
-          <label for="legend" style="display: none;">Party Leader Legend:</label>
-          <input type="text" id="legend" name="legend" readonly style="display: none;"/>
+          <label for="legend" style="display: none">Party Leader Legend:</label>
+          <input
+            type="text"
+            id="legend"
+            name="legend"
+            readonly
+            style="display: none" />
 
-          <label for="address" style="display: none;">Party Leader Address:</label>
-          <input type="text" id="address" name="address" readonly style="display: none;" />
+          <label for="address" style="display: none"
+            >Party Leader Address:</label
+          >
+          <input
+            type="text"
+            id="address"
+            name="address"
+            readonly
+            style="display: none" />
 
-          <label for="barangay" style="display: none;">Party Leader Barangay:</label>
-          <input type="text" id="barangay" name="barangay" readonly style="display: none;"/>
+          <label for="barangay" style="display: none"
+            >Party Leader Barangay:</label
+          >
+          <input
+            type="text"
+            id="barangay"
+            name="barangay"
+            readonly
+            style="display: none" />
 
-          <label for="contact-number" style="display: none;" >Party Leader Contact Number:</label>
+          <label for="contact-number" style="display: none"
+            >Party Leader Contact Number:</label
+          >
           <input
             type="text"
             id="contact-number"
             name="contact-number"
-            readonly style="display: none;"/>
+            readonly
+            style="display: none" />
 
           <label for="party-supporters">Party Supporter:</label>
           <input
@@ -393,6 +442,15 @@
             required />
           <div id="autocomplete-results-supporter"></div>
 
+        
+          <label for="personnel-type">Personnel type:</label>
+          <select name="personnel-type" id="personnel-type" required style="padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; width: 100%; margin-bottom: 16px;">
+            <option value="" disabled selected>Select a personnel type</option>
+            <option value="Inside Watcher">Inside Watcher</option>
+            <option value="Outside Watcher">Outside</option>
+            <option value="Worker">Worker</option>
+          </select>
+          
           <label for="precinct_supporter">Party Supporter Precinct:</label>
           <input
             type="text"
@@ -400,8 +458,11 @@
             name="precinct_supporter"
             readonly />
           <label for="cluster_supporter">Party Supporter Cluster:</label>
-          <input type="text" id="cluster_supporter" name="cluster_supporter" readonly />
-  
+          <input
+            type="text"
+            id="cluster_supporter"
+            name="cluster_supporter"
+            readonly />
 
           <label for="legend_supporter">Party Supporter Legend:</label>
           <input
@@ -424,7 +485,9 @@
             name="barangay_supporter"
             readonly />
 
-          <label for="contact_number_supporter">Party Supporter Contact Number:</label>
+          <label for="contact_number_supporter"
+            >Party Supporter Contact Number:</label
+          >
           <input
             type="text"
             id="contact_number_supporter"
@@ -490,6 +553,7 @@
                 // Dynamically update the table with new data, and prevent a direct display
                 $("#party-supporter-table tbody").append(`<tr>
                         <td>${response.party_leader_name}</td>
+                        <td>${response.supporter_type}</td>
                         <td>${response.supporter_name}</td>
                         <td>${response.party_leader_cluster}</td>
                         <td>${response.precinct_number}</td>
@@ -532,6 +596,7 @@
                       .data("id", item.id)
                       .on("click", function () {
                         $("#party-leader").val(item.party_leader_name);
+                        $("#personnel-type").val(item.supporter_name);
                         $("#precinct").val(item.precinct_number);
                         $("#cluster").val(item.party_leader_cluster);
                         $("#legend").val(item.legend);
@@ -614,7 +679,8 @@
     <script>
       // Function to fetch cluster based on precinct number
       function fetchCluster() {
-        var precinctNumber = document.getElementById("precinct_supporter").value;
+        var precinctNumber =
+          document.getElementById("precinct_supporter").value;
         console.log("Precinct Number: ", precinctNumber); // Debug log to check precinct number
 
         // Check if the precinct number is not empty
@@ -627,7 +693,8 @@
             .then((data) => {
               console.log("Cluster Data: ", data); // Debug log to check fetched data
               if (data.cluster_id) {
-                document.getElementById("cluster_supporter").value = data.cluster_id; // Set cluster_id if found
+                document.getElementById("cluster_supporter").value =
+                  data.cluster_id; // Set cluster_id if found
               } else {
                 document.getElementById("cluster_supporter").value = ""; // Clear the cluster ID if no match
               }

@@ -13,6 +13,7 @@ class Supporters(models.Model):
     supporter_contact_number = models.CharField(max_length=15)  # Contact number with validation length
     supporter_precinct_number = models.CharField(max_length=50, default='0000')  # Default precinct number
     supporter_legend = models.TextField(max_length=20) 
+    supporter_type = models.TextField(max_length=20) 
     # Additional Fields for party leader
     party_leader = models.CharField(max_length=200, null=True, blank=True)  # Party leader's name
     party_cluster_id = models.CharField(max_length=100)

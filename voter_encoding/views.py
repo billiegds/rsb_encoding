@@ -126,7 +126,7 @@ def add_supporter(request):
         # Now, this code should not be reached if supporter exists
         # Create a new Supporter entry
         Supporters.objects.create(
-            
+            supporter_type=request.POST.get('personnel-type'),
             supporter_name=supporter_name,
             supporter_barangay=request.POST.get('barangay_supporter'),
             supporter_address=request.POST.get('address_supporter'),
@@ -264,7 +264,7 @@ def export_supporters(request):
 
     # Define the headers for the columns
     headers = [
-        "Voter ID", "Supporter Cluster", "Supporter Name", 
+        "Voter ID", "Supporter Cluster", "Personnel Type", "Supporter Name", 
         "Supporter Barangay", "Supporter Address", "Supporter Contact Number", 
         "Supporter Precinct Number", "Supporter Legend",
         "Party Leader", "Party Cluster ID", "Party Precinct Number", 
@@ -283,6 +283,7 @@ def export_supporters(request):
         row = [
             supporter.voter_id,
             supporter.supporter_cluster,
+            supporter.supporter_type,
             supporter.supporter_name,
             supporter.supporter_barangay,
             supporter.supporter_address,
