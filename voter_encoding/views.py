@@ -5,6 +5,8 @@ from django.contrib import messages  # For flash messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from openpyxl import Workbook
+from django.http import HttpResponse
 
 def voters_autocomplete(request):
     query = request.GET.get('q', '')
@@ -247,3 +249,111 @@ def find_cluster_by_precinct(request):
 @login_required
 def index(request):
     return render(request, 'login.html')
+
+
+import uuid
+from openpyxl import Workbook
+from django.http import HttpResponse
+from .models import Supporters
+
+def export_supporters(request):
+    # Create a workbook and add a worksheet
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = 'Supporters'
+
+    # Define the headers for the columns
+    headers = [
+        "Voter ID", "Supporter Cluster", "Supporter Name", 
+        "Supporter Barangay", "Supporter Address", "Supporter Contact Number", 
+        "Supporter Precinct Number", "Supporter Legend",
+        "Party Leader", "Party Cluster ID", "Party Precinct Number", 
+        "Party Barangay", "Party Address", "Party Contact Number", 
+        "Party Precinct Number", "Party Legend"
+    ]
+    
+    # Write headers to the first row
+    sheet.append(headers)
+
+    # Query the Supporters table
+    supporters = Supporters.objects.all()
+
+    # Add data rows to the sheet
+    for supporter in supporters:
+        row = [
+            supporter.voter_id,
+            supporter.supporter_cluster,
+            supporter.supporter_name,
+            supporter.supporter_barangay,
+            supporter.supporter_address,
+            supporter.supporter_contact_number,
+            supporter.supporter_precinct_number,
+            supporter.supporter_legend,
+            supporter.party_leader,
+            supporter.party_cluster_id,
+            supporter.party_precinct_number,
+            supporter.party_barangay,
+            supporter.party_address,
+            supporter.party_contact_number,
+            supporter.party_precinct_number,
+            supporter.party_legend
+        ]
+        sheet.append(row)
+
+    
+    # Set the response for downloading the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # Make sure it's forced as an attachment and not inline
+    response['Content-Disposition'] = 'attachment; filename="supporters.xlsx"'
+    
+    # Ensure no caching
+    response['Cache-Control'] = 'no-cache'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
+
+def export_party_leaders(request):
+    # Create a workbook and add a worksheet
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = 'Party Leaders'
+
+    # Define the headers for the columns
+    headers = [
+        "Party Leader Cluster", "Party Leader Name", "Precinct Number", 
+        "Legend", "Address", "Barangay", "Contact Number"
+    ]
+    
+    # Write headers to the first row
+    sheet.append(headers)
+
+    # Query the PartyLeader table
+    party_leaders = PartyLeader.objects.all()
+
+    # Add data rows to the sheet
+    for leader in party_leaders:
+        row = [
+            leader.party_leader_cluster,
+            leader.party_leader_name,
+            leader.precinct_number,
+            leader.legend if leader.legend else 'Not Provided',
+            leader.address,
+            leader.barangay,
+            leader.contact_number
+        ]
+        sheet.append(row)
+
+    # Set the response for downloading the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # Make sure it's forced as an attachment and not inline
+    response['Content-Disposition'] = 'attachment; filename="party_leaders.xlsx"'
+    
+    # Ensure no caching
+    response['Cache-Control'] = 'no-cache'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response

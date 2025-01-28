@@ -17,4 +17,7 @@ urlpatterns = [
     path('party-leader-ajax/', views.party_leader_list_ajax, name='party_leader_list_ajax'),
     path('find_cluster_by_precinct/', views.find_cluster_by_precinct, name='find_cluster_by_precinct'),
      # other paths...
+    path('export-supporters/', views.export_supporters, name='export_supporters'),
+    path('export-party-leaders/', views.export_party_leaders, name='export_party_leaders'),
+
 ]

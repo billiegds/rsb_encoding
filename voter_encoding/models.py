@@ -66,3 +66,4 @@ class Cluster(models.Model):
 
     def __str__(self):
         return self.cluster_id
+    
