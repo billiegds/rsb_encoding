@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-s&+8$mql4lyi82aoh#qfuo34t+i!$f6#2u)h68ov*69dap10m&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["mantis-modern-wren.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ["https://mantis-modern-wren.ngrok-free.app"]
 
 # Application definition
 
