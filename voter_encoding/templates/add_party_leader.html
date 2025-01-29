@@ -244,6 +244,28 @@
       .legend span {
         margin-right: 15px;
       }
+
+      #autocomplete-results-chairman {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        position: absolute;
+        width: auto;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 999;
+        display: none;
+      }
+
+      #autocomplete-results-chairman div {
+        padding: 12px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      #autocomplete-results-chairman div:hover {
+        background-color: #f1f1f1;
+      }
+
     </style>
   </head>
   <body>
@@ -282,6 +304,7 @@
         <thead>
           <tr>
             <th>Cluster</th>
+            <th>Party Chairman</th>
             <th>Party Leader Name</th>
             <th>Precinct</th>
             <th>Legend</th>
@@ -294,6 +317,7 @@
           {% for leader in party_leaders %}
           <tr>
             <td>{{ leader.party_leader_cluster }}</td>
+            <td>{{ leader.party_chairman }}</td>
             <td>{{ leader.party_leader_name }}</td>
             <td>{{ leader.precinct_number }}</td>
             <td>{{ leader.legend }}</td>
@@ -319,10 +343,21 @@
           class="error-message"
           id="form-error-message"
           style="display: none"></div>
-
+        
         <h2 class="modal-header">Add Party Leader</h2>
         <form method="POST" id="party-leader-form">
           {% csrf_token %}
+          
+          <label for="party-chairman">Party Chairman:</label>
+          <input
+            type="text"
+            id="party-chairman"
+            name="party-chairman"
+            autocomplete="off"
+            required />
+          <div id="autocomplete-results-chairman"></div>
+
+
           <label for="party-leader">Party Leader:</label>
           <input
             type="text"
@@ -529,6 +564,50 @@
 
         // Hide autocomplete results on blur event
         $("#party-leader").on("blur", function () {
+          setTimeout(function () {
+            $("#autocomplete-results").hide();
+          }, 200);
+        });
+
+
+        // CHAIRMAN
+        // Autocomplete functionality for Party Supporter search field
+        $("#party-chairman").on("input", function () {
+          const query = $(this).val();
+
+          if (query.length >= 3) {
+            // Trigger autocomplete when input length is 3 or more
+            $.ajax({
+              url: "/voter_encoding/voters-autocomplete/",
+              data: { q: query },
+              success: function (data) {
+                $("#autocomplete-results-chairman").empty().show();
+                if (data.length > 0) {
+                  data.forEach(function (item) {
+                    const option = $("<div>")
+                      .text(item.name)
+                      .data("id", item.id)
+                      .on("click", function () {
+                        $("#party-chairman").val(item.name);
+                        $("#autocomplete-results-chairman").hide();
+                      });
+                    $("#autocomplete-results-chairman").append(option);
+                  });
+                } else {
+                  $("#autocomplete-results-chairman").hide();
+                }
+              },
+              error: function () {
+                $("#autocomplete-results-chairman").hide();
+              },
+            });
+          } else {
+            $("#autocomplete-results-chairman").hide();
+          }
+        });
+
+        // Hide autocomplete results on blur event
+        $("#party-chairman").on("blur", function () {
           setTimeout(function () {
             $("#autocomplete-results").hide();
           }, 200);

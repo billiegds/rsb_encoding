@@ -26,7 +26,8 @@ def add_party_leader(request):
         address = request.POST.get('address')
         barangay = request.POST.get('barangay')
         contact_number = request.POST.get('contact_number')
-
+        party_chairman = request.POST.get('party-chairman')
+        
         # Check if the party leader with the exact name already exists
         existing_party_leader = PartyLeader.objects.filter(party_leader_name__iexact=party_leader_name).first()
         print(f"Existing Leader: {existing_party_leader}")
@@ -53,6 +54,7 @@ def add_party_leader(request):
         print(cluster)
         # Create a new PartyLeader entry
         PartyLeader.objects.create(
+            party_chairman = party_chairman,
             party_leader_name=party_leader_name,
             party_leader_cluster=cluster,    
             precinct_number=precinct,
@@ -126,6 +128,7 @@ def add_supporter(request):
         # Now, this code should not be reached if supporter exists
         # Create a new Supporter entry
         Supporters.objects.create(
+            party_chairman = request.POST.get('party-chairman') ,
             supporter_type=request.POST.get('personnel-type'),
             supporter_name=supporter_name,
             supporter_barangay=request.POST.get('barangay_supporter'),
@@ -156,7 +159,7 @@ def party_leader_autocomplete(request):
     query = request.GET.get('q', '')
     if query:
         results = PartyLeader.objects.filter(
-            party_leader_name__icontains=query).values(
+            party_leader_name__icontains=query).values('party_chairman',
                 'party_leader_name', 'precinct_number', 
                 'legend', 'address', 'barangay', 'contact_number', 'party_leader_cluster')
         return JsonResponse(list(results), safe=False)

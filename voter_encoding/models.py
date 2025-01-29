@@ -4,8 +4,11 @@ import uuid
 
 # Create your models here.
 class Supporters(models.Model):
+    
+    party_chairman = models.CharField(max_length=100)
     # Basic Voter Information
     voter_id = models.CharField(max_length=20, unique=True)
+    supporter_type= models.CharField(max_length=100)
     supporter_cluster = models.CharField(max_length=100)
     supporter_name = models.CharField(max_length=200, unique=True)  # Ensure the name is unique across all voters
     supporter_barangay = models.CharField(max_length=100, null=True, blank=True, default='Not Provided')         # Add
@@ -13,7 +16,6 @@ class Supporters(models.Model):
     supporter_contact_number = models.CharField(max_length=15)  # Contact number with validation length
     supporter_precinct_number = models.CharField(max_length=50, default='0000')  # Default precinct number
     supporter_legend = models.TextField(max_length=20) 
-    supporter_type = models.TextField(max_length=20) 
     # Additional Fields for party leader
     party_leader = models.CharField(max_length=200, null=True, blank=True)  # Party leader's name
     party_cluster_id = models.CharField(max_length=100)
@@ -38,6 +40,7 @@ class Supporters(models.Model):
 
 class PartyLeader(models.Model):
     party_leader_cluster = models.CharField(max_length=100)
+    party_chairman = models.CharField(max_length=100)
     party_leader_name = models.CharField(max_length=200)  # Corrected field name
     precinct_number = models.CharField(max_length=50)
     legend = models.CharField(max_length=100, null=True)
@@ -67,4 +70,3 @@ class Cluster(models.Model):
 
     def __str__(self):
         return self.cluster_id
-    

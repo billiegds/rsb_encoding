@@ -377,6 +377,9 @@
             required />
           <div id="autocomplete-results"></div>
 
+          <label for="party-chairman" style="display: none;">Party Chairman:</label>
+          <input type="text" id="party-chairman" name="party-chairman" readonly style="display: none;"/>
+
           <label for="precinct" style="display: none"
             >Party Leader Precinct:</label
           >
@@ -597,6 +600,7 @@
                       .text(item.party_leader_name)
                       .data("id", item.id)
                       .on("click", function () {
+                        $("#party-chairman").val(item.party_chairman)
                         $("#party-leader").val(item.party_leader_name);
                         $("#personnel-type").val(item.supporter_name);
                         $("#precinct").val(item.precinct_number);
